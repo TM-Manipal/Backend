@@ -1,0 +1,30 @@
+branches:
+  only:
+  - master
+  - stable
+language: node_js
+cache: yarn
+node_js:
+  - "lts/*"
+addons:
+  apt:
+    update: true
+    sources:
+    - sourceline: 'deb http://dl.yarnpkg.com/debian/ stable main'
+      key_url: 'http://dl.yarnpkg.com/debian/pubkey.gpg'
+    packages:
+    - yarn
+before_install: true
+install:
+  - yarn install
+before_script: true
+script:
+  - yarn test
+after_success:
+  - wget https://raw.githubusercontent.com/k3rn31p4nic/travis-ci-discord-webhook/master/send.sh
+  - chmod +x send.sh
+  - ./send.sh success $WEBHOOK_URL
+after_failure:
+  - wget https://raw.githubusercontent.com/k3rn31p4nic/travis-ci-discord-webhook/master/send.sh
+  - chmod +x send.sh
+  - ./send.sh failure $WEBHOOK_URL
