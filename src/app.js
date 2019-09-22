@@ -32,13 +32,7 @@ app.use(logger(function (tokens, req, res) {
 
 app.use(cors({
   origin: [
-    "http://manipalutsav.github.io",
-    "https://manipalutsav.github.io",
-    "http://manipalutsav.com",
-    "https://manipalutsav.com",
-    /\.manipalutsav\.com$/,
-    /^(https?:\/\/)(localhost|(192\.168\.\d{1,3}\.\d{1,3}))(:\d{1,5})*$/,
-    // /^(?:https?:\/\/)?(?:localhost|(?:192\.168(?:\.(?:\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])){2})(?::(?:[0-9]{1,4}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5]))$/,
+    
   ],
   credentials: true,
 }));

@@ -1,7 +1,7 @@
 {
-  "name": "manipal-utsav-backend",
+  "name": "TM-Manipal-backend",
   "private": true,
-  "description": "The backend of Manipal Utsav web application.",
+  "description": "The backend of TM-Manipal web application.",
   "version": "0.1.0",
   "repository": "https://github.com/ManipalUtsav/backend",
   "main": "./scripts/start",
