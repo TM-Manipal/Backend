@@ -6,6 +6,10 @@ const schema = {
     type: String,
     required: true,
   },
+  type: {
+    type: String,
+    required: true,
+  },
   minMembersPerTeam: {
     type: Number,
     required: true,
@@ -18,9 +22,13 @@ const schema = {
   },
   venue: String,
   description: String,
-  duration: Number,
   startDate: Date,
   endDate: Date,
+  rules: {
+    type: [String],
+    required: true,
+  },
+  eventHeads: [{name: String,contact: String}],
 };
 
 const options = {

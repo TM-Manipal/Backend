@@ -124,7 +124,6 @@ const createRound = async (req, res, next) => {
     event: event.id,
     teams: [],
     criteria: req.body.criteria,
-    slottable: req.body.slottable,
     status: ROUND_STATUS.SCHEDULED,
   });
 
@@ -141,7 +140,6 @@ const createRound = async (req, res, next) => {
           event: req.params.event,
           teams: [],
           criteria: round.criteria,
-          slottable: round.slottable,
         },
       });
     }).
@@ -163,7 +161,6 @@ const updateRound = async (req, res, next) => {
 
   let roundDocument = await  RoundModel.findById(req.params.round);
   roundDocument.criteria = req.body.criteria;
-  roundDocument.slottable = req.body.slottable;
 
   await roundDocument.save().
     then(async round => {
@@ -178,7 +175,6 @@ const updateRound = async (req, res, next) => {
           event: req.params.event,
           teams: [],
           criteria: round.criteria,
-          slottable: round.slottable,
         },
       });
     }).
@@ -335,42 +331,6 @@ const updateTeamScores = async (req, res) => {
       round: req.params.round,
       teams: req.body,
     },
-  });
-};
-
-const createSlots = async (req, res) => {
-  let teams = await TeamModel.find({
-    event: req.params.event,
-  });
-  if (!teams) teams = [];
-
-  let teamNames = teams.map(team => team.name);
-  // TODO: Use team names
-  teams = teams.map(team => team.id);
-
-  // Slotting
-  let slots = [];
-  let noOfTeams = teams.length;
-  for (let i = 0; i < noOfTeams; i++) {
-    let index = Math.floor(Math.random() * teams.length);
-    let team_id = teams[index];
-    let team_name = teamNames[index];
-
-    await SlotModel.create({
-      number: i + 1,
-      round: req.params.round,
-      team: team_id,
-      teamName: team_name,
-    });
-    slots.push({ id:team_id, name: team_name, number: i + 1 });
-    teams.splice(teams.indexOf(team_id), 1);
-    teamNames.splice(teamNames.indexOf(team_name), 1);
-  }
-
-  return res.json({
-    status: 200,
-    message: "Success",
-    data: slots,
   });
 };
 
@@ -577,7 +537,6 @@ const getRound = async (req, res, next) => {
       published: round.published,
       teams: round.teams,
       duration: round.duration,
-      slottable: round.slottable,
       status: round.status,
     },
   });
@@ -594,7 +553,6 @@ const getRounds = async (req, res) => {
     teams: round.teams,
     published: round.published,
     duration: round.duration,
-    slottable: round.slottable,
     status: round.status,
   }));
 
@@ -676,24 +634,28 @@ const getTeamsInRound = async (req, res) => {
 const create = async (req, res) => {
   let {
     name,
+    type,
     minMembersPerTeam,
     maxMembersPerTeam,
-    venue,
     description,
-    duration,
     startDate,
     endDate,
+    eventHeads,
+    rules,
+    venue,
     } = req.body;
 
   let event = new EventModel({
     name,
+    type,
     minMembersPerTeam,
     maxMembersPerTeam,
-    venue,
     description,
-    duration,
     startDate,
     endDate,
+    eventHeads,
+    rules,
+    venue,
   });
 
   await event.save().
@@ -707,6 +669,8 @@ const create = async (req, res) => {
           description: event.description,
           startDate: event.startDate,
           endDate: event.endDate,
+          eventHeads: event.eventHeads,
+          rules: event.rules,
         },
       });
     }).
@@ -721,6 +685,8 @@ const create = async (req, res) => {
     });
 };
 
+
+//requires changes
 const edit = async (req, res) => {
   let {
     name,
@@ -734,7 +700,6 @@ const edit = async (req, res) => {
     duration,
     startDate,
     endDate,
-    slottable,
     criteria,
   } = req.body;
 
@@ -751,7 +716,6 @@ const edit = async (req, res) => {
   event.duration = duration ? duration : event.duration;
   event.startDate = startDate ? startDate : event.startDate;
   event.endDate = endDate ? endDate : event.endDate;
-  event.slottable = !!slottable;
 
   if (criteria) {
     if (event.rounds && event.rounds.length) {
