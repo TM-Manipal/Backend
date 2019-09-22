@@ -346,16 +346,18 @@ const get = async (req, res, next) => {
     data: {
       id: event.id,
       name: event.name,
+      type: event.type,
       description: event.description,
-      rounds: event.rounds,
+      rounds: roundId,
       teams: event.teams,
       minMembersPerTeam: event.minMembersPerTeam,
       maxMembersPerTeam: event.maxMembersPerTeam,
-      maxTeamsPerCollege: event.maxTeamsPerCollege,
       venue: event.venue,
-      duration: event.duration,
       startDate: event.startDate,
       endDate: event.endDate,
+      eventHeads: event.eventHeads,
+      rules: event.rules,
+      venue: event.venue
     },
   });
 };
@@ -371,16 +373,18 @@ const getAll = async (req, res) => {
     return {
       id: event.id,
       name: event.name,
+      type: event.type,
       description: event.description,
       rounds: roundId,
       teams: event.teams,
       minMembersPerTeam: event.minMembersPerTeam,
       maxMembersPerTeam: event.maxMembersPerTeam,
-      maxTeamsPerCollege: event.maxTeamsPerCollege,
       venue: event.venue,
-      duration: event.duration,
       startDate: event.startDate,
       endDate: event.endDate,
+      eventHeads: event.eventHeads,
+      rules: event.rules,
+      venue: event.venue
     };
   });
 
@@ -567,6 +571,9 @@ const getTeam = async (req, res, next) => {
   let team = await TeamModel.findOne({
     _id: req.params.team,
     event: req.params.event,
+  }).populate({
+    path: "members",
+    model: "Participant",
   });
 
   if (!team) next();
@@ -576,7 +583,6 @@ const getTeam = async (req, res, next) => {
     message: "Success",
     data: {
       id: team.id,
-      name:team.name,
       event: team.event,
       college: team.college,
       members: team.members,
@@ -586,7 +592,11 @@ const getTeam = async (req, res, next) => {
 };
 
 const getTeams = async (req, res) => {
-  let teams = await TeamModel.find({ event: req.params.event });
+  let teams = await TeamModel.find({ event: req.params.event })
+  .populate({
+    path: "members",
+    model: "Participant",
+  });
 
   if (!teams) teams = [];
 
@@ -595,7 +605,6 @@ const getTeams = async (req, res) => {
     event: team.event,
     college: team.college,
     members: team.members,
-    name: team.name,
     disqualified: team.disqualified,
   }));
 
@@ -619,7 +628,6 @@ const getTeamsInRound = async (req, res) => {
     id: team.id,
     event: team.event,
     college: team.college,
-    name:team.name,
     members: team.members,
     disqualified: team.disqualified,
   }));
@@ -713,7 +721,6 @@ const edit = async (req, res) => {
   event.maxTeamsPerCollege = maxTeamsPerCollege ? maxTeamsPerCollege : event.maxTeamsPerCollege;
   event.venue = venue ? venue : event.venue;
   event.description = description ? description : event.description;
-  event.duration = duration ? duration : event.duration;
   event.startDate = startDate ? startDate : event.startDate;
   event.endDate = endDate ? endDate : event.endDate;
 
@@ -770,7 +777,6 @@ const addBulkParticipants = (data, college) => {
       await data.map(each => {
         let participant = new ParticipantModel({
           name: each.name,
-          college: college,
           mobile: each.mobile,
           email: each.email,
         });

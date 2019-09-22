@@ -5,10 +5,6 @@ const schema = {
     type: String,
     required: true,
   },
-  college: {
-    type: String,
-    required: true,
-  },
   mobile: {
     type: Number,
     required: true,
