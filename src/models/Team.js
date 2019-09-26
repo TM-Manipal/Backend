@@ -1,10 +1,6 @@
 const mongoose = require("mongoose");
 
 const schema = {
-  event: {
-    type: mongoose.Schema.Types.ObjectId,
-    required: true,
-  },
   college: {
     type: String,
     required: true,

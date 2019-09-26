@@ -3,51 +3,6 @@
 const TeamModel = require("../models/Team");
 const EventModel = require("../models/Event");
 
-/**
- * Add new team into the system.
- * @param {object} req The request object
- * @param {object} res The response object
- * @returns {void}
- */
-const create = async (req, res) => {
-  let {
-    event,
-    college,
-    members,
-  } = req.body;
-
-
-  // Check if participation limit reached
-  let participatedTeams = await TeamModel.find({ college: college });
-  let eventInfo = await EventModel.findOne(event);
-  if (participatedTeams.length === eventInfo.maxParticpants) {
-    return res.status(401).json({
-      status: 416,
-      message: "Max participation limit reached",
-    });
-  }
-
-  let team = new TeamModel({
-    event,
-    college,
-    members,
-  });
-
-  team.save((err) => {
-    if (err) {
-      return res.status(500).json({
-        status: 500,
-        message: "Internal server error",
-      });
-    }
-
-    return res.status(200).json({
-      status: 200,
-      message: "Team created",
-      data: team,
-    });
-  });
-};
 
 /**
  * Fetch team details.
@@ -66,24 +21,28 @@ const get = async (req, res) => {
 };
 
 const getAll = async (req, res) => {
-  try {
-    let teams = await TeamModel.find();
+  let teams = await TeamModel.find()
+  .populate({
+    path: "members",
+    model: "Participant",
+  });
 
-    return res.json({
-      status: 200,
-      message: "Success",
-      data: teams,
-    });
-  } catch (e) {
-    return res.status(500).json({
-      status: 500,
-      message: "Internal Server Error",
-    });
-  }
+  if (!teams) teams = [];
+
+  teams = teams.map(team => ({
+    id: team.id,
+    college: team.college,
+    members: team.members,
+    disqualified: team.disqualified,
+  }));
+
+  return res.json({
+    status: 200,
+    message: "Success",
+    data: teams,
+  });
 };
 
 module.exports = {
-  create,
-  get,
-  getAll,
+  getAll
 };

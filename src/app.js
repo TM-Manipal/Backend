@@ -46,20 +46,13 @@ app.use(headers);
 
 // Routes
 const eventsRouter = require("./routes/events");
-//const leaderboardRouter = require("./routes/leaderboard"); this has to complete change
-const usersRouter = require("./routes/users");
-const judgesRouter = require("./routes/judges");
-const intruderRouter = require("./routes/intruder");
 const participantsRouter = require("./routes/participants");
-const statsRouter = require("./routes/stats");
+const teamsRouter = require("./routes/teams");
 
 app.use("/events", eventsRouter);
+app.use('/teams', teamsRouter);
 //app.use("/leaderboard", leaderboardRouter); this has to complete change
-app.use("/users", usersRouter);
-app.use("/judges", judgesRouter);
-app.use("/intruder", intruderRouter);
 app.use("/participants", participantsRouter);
-app.use("/stats", statsRouter);
 
 // Error handlers
 app.use(handle404);

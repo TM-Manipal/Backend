@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
 
 const schema = {
-  rounds: [ mongoose.Schema.Types.ObjectId ],
   name: {
     type: String,
     required: true,
