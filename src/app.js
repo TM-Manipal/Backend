@@ -30,12 +30,7 @@ app.use(logger(function (tokens, req, res) {
     + " " + chalk.cyan(tokens["response-time"](req, res));
 }));
 
-app.use(cors({
-  origin: [
-    
-  ],
-  credentials: true,
-}));
+app.use(cors());
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
