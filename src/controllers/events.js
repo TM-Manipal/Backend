@@ -39,7 +39,7 @@ const createTeam = async (req, res) => {
         
         return res.json({
           status: 200,
-          message: "Team Created",
+          message: "Registration successfull",
           data: team,
         });
       });
@@ -47,6 +47,13 @@ const createTeam = async (req, res) => {
     catch(e => {
       // eslint-disable-next-line no-console
       console.poo(e);
+
+      if(e=="Incomplete form") {
+        return res.status(401).json({
+        status: 401,
+        message: "Please complete the form as per the instructions",
+      });
+      }
 
       return res.status(500).json({
         status: 500,
@@ -179,12 +186,15 @@ const addBulkParticipants = (data, college) => {
     try {
       let members = [];
       await data.map(each => {
+        if(!each.mobile | !each.email | !each.gender | !each.name) {
+          throw("Incomplete form");
+        }
         let participant = new ParticipantModel({
           name: each.name,
           mobile: each.mobile,
           email: each.email,
           gender: each.gender,
-          needAccommodation: each.needAccommodation
+          accommodation: each.accommodation
         });
         members.push(participant._id);
         participant.save(err => {

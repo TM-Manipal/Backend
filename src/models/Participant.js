@@ -3,23 +3,18 @@ const mongoose = require("mongoose");
 const schema = {
   name: {
     type: String,
-    required: true,
   },
   mobile: {
     type: Number,
-    required: true,
   },
   email: {
     type: String,
-    required: true,
   },
   gender: {
     type: String,
-    required: true,
   },
-  needAccommodation: {
+  accommodation: {
     type: Boolean,
-    required: true,
   }
 };
 
