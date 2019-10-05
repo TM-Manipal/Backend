@@ -191,7 +191,7 @@ const addBulkParticipants = (data, college) => {
         }
         let participant = new ParticipantModel({
           name: each.name,
-          mobile: each.mobile,
+          mobile: each.mobile.replace(/\s/g, ""),
           email: each.email,
           gender: each.gender,
           accommodation: each.accommodation
